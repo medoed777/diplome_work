@@ -34,7 +34,7 @@
 1. Клонируйте репозиторий:
 
    
-   git clone https://github.com/medoed777/diplome_work
+   git clone https://github.com/medoed777/diplome_work.git
    cd https://github.com/medoed777/diplome_work
    
 2. Постройте Docker-образ:

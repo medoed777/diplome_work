@@ -3,6 +3,9 @@ from django.db import models
 import random
 import string
 
+from django.utils import timezone
+
+
 class User(AbstractUser):
     username = None
 
@@ -27,6 +30,9 @@ class PhoneCode(models.Model):
     code = models.CharField(max_length=4, blank = False, verbose_name="Код активации",)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания",)
 
+    def is_expired(self):
+        return (timezone.now() - self.created_at).total_seconds() > 600
+
     class Meta:
         verbose_name = 'Код активации'
         verbose_name_plural = 'Коды активации'
@@ -42,10 +48,12 @@ class Profile(models.Model):
 
     def generate_invate_code(self):
         chars = string.ascii_letters + string.digits
-        return "".join([random.choice(chars) for _ in range(6)])
+        while True:
+            code = "".join([random.choice(chars) for _ in range(6)])
+            if not Profile.objects.filter(invaite_code=code).exists():
+                return code
 
     def save(self, *args, **kwargs):
         if not self.invaite_code:
             self.invaite_code = self.generate_invate_code()
         super().save(*args, **kwargs)
-
