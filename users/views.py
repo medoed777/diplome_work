@@ -29,10 +29,10 @@ class RegisterView(APIView):
             user, created = User.objects.get_or_create(phone=phone)
 
             if not created:
-                if user.invited_by and invaited_by_code:
+                if user.invaited_by and invaited_by_code:
                     return Response(
                         {
-                            "inavited_by": "Инвайт-код уже указан и не может быть изменён."
+                            "invaited_by": "Инвайт-код уже указан и не может быть изменён."
                         },
                         status=status.HTTP_400_BAD_REQUEST,
                     )
@@ -42,7 +42,7 @@ class RegisterView(APIView):
                     invaite_code=invaited_by_code
                 ).first()
                 if invaited_by_user:
-                    user.invited_by = invaited_by_user
+                    user.invaited_by = invaited_by_user
                     user.save()
 
             try:

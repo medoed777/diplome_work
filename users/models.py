@@ -33,10 +33,8 @@ class User(AbstractUser):
 
     def generate_code(self):
         chars = string.digits
-        while True:
-            code = "".join([random.choice(chars) for _ in range()])
-            if not User.objects.filter(invaite_code=code).exists():
-                return code
+        code = "".join([random.choice(chars) for _ in range(4)])
+        return code
 
     def __str__(self):
         return str(self.phone)
