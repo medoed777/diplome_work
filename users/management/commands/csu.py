@@ -7,8 +7,6 @@ class Command(BaseCommand):
         User = get_user_model()
         user = User.objects.create(
             phone='+79961734335',
-            first_name='Admin',
-            last_name='Adminex'
         )
         user.set_password('1234')
         user.is_staff = True
