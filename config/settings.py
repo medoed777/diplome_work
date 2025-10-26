@@ -175,14 +175,15 @@ if CACHE_ENABLED:
     CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.redis.RedisCache",
-            "LOCATION": os.getenv("LOCATION"),
+            "LOCATION": "redis://redis:6379/1",
         }
     }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=180),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
 SMS_EMAIL = os.getenv("SMS_EMAIL")
 SMS_TOKEN = os.getenv("SMS_TOKEN")
+SMS_SIGN = os.getenv("SMS_SIGN")
