@@ -1,4 +1,4 @@
-# Реферальная система на Python
+# Referral system on Python
 
 ### Описание проекта
 
