@@ -1,59 +1,47 @@
-from django.contrib.auth.models import AbstractUser
-from django.db import models
 import random
 import string
 
-from django.utils import timezone
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+from users.services import generate_invaite_code
+from phonenumber_field.modelfields import PhoneNumberField
+import secrets
 
 
 class User(AbstractUser):
     username = None
-
-    phone = models.CharField(
-        max_length = 20, null = False, blank = False, unique = True, verbose_name="Номер телефона",
+    phone = PhoneNumberField(unique=True, verbose_name="Номер телефона", help_text="Введите номер телефона")
+    invaite_code = models.CharField(
+        max_length=6,
+        unique=True,
+        default=generate_invaite_code,
+        verbose_name="Инвайт-код",
+    )
+    invaited_by = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="invaited_users",
+        verbose_name="Инвайт-код пригласившего пользователя",
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name="Дата первой авторизации"
     )
 
-    USERNAME_FIELD = 'phone'
-
+    USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = []
 
-    class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
-
-
-class PhoneCode(models.Model):
-    phone = models.CharField(
-        max_length=20, null=False, blank=False, unique=True, verbose_name="Номер телефона",
-    )
-
-    code = models.CharField(max_length=4, blank = False, verbose_name="Код активации",)
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания",)
-
-    def is_expired(self):
-        return (timezone.now() - self.created_at).total_seconds() > 600
-
-    class Meta:
-        verbose_name = 'Код активации'
-        verbose_name_plural = 'Коды активации'
-
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="Пользователь")
-
-    invaite_code = models.CharField(max_length=6, unique=True, null=False, blank=False, verbose_name="Инвайт-код")
-
-    active_invaite_code = models.CharField(max_length=6, verbose_name="Активированный инвайт-код")
-
-
-    def generate_invate_code(self):
-        chars = string.ascii_letters + string.digits
+    def generate_code(self):
+        chars = string.digits
         while True:
-            code = "".join([random.choice(chars) for _ in range(6)])
-            if not Profile.objects.filter(invaite_code=code).exists():
+            code = "".join([random.choice(chars) for _ in range(4)])
+            if not User.objects.filter(invaite_code=code).exists():
                 return code
 
-    def save(self, *args, **kwargs):
-        if not self.invaite_code:
-            self.invaite_code = self.generate_invate_code()
-        super().save(*args, **kwargs)
+    def __str__(self):
+        return str(self.phone)
+
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"

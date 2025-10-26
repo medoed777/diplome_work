@@ -1,7 +1,7 @@
+from users.apps import UsersConfig
+# from users.views import RegisterView, VerifyCodeView, UserProfileView
 from django.urls import path
-from users.views import SendCodeView
+from rest_framework_simplejwt.views import TokenRefreshView
 
 
-urlpatterns = [
-    path('api/send_code/', SendCodeView.as_view())
-]
+app_name = UsersConfig.name
