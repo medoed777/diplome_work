@@ -4,9 +4,10 @@ import django.contrib.auth.models
 import django.db.models.deletion
 import django.utils.timezone
 import phonenumber_field.modelfields
-import users.services
 from django.conf import settings
 from django.db import migrations, models
+
+import users.services
 
 
 class Migration(migrations.Migration):
@@ -41,7 +42,7 @@ class Migration(migrations.Migration):
                     "is_superuser",
                     models.BooleanField(
                         default=False,
-                        help_text="Designates that this user has all permissions without explicitly assigning them.",
+                        help_text="Designates that this users has all permissions without explicitly assigning them.",
                         verbose_name="superuser status",
                     ),
                 ),
@@ -67,7 +68,7 @@ class Migration(migrations.Migration):
                     "is_staff",
                     models.BooleanField(
                         default=False,
-                        help_text="Designates whether the user can log into this admin site.",
+                        help_text="Designates whether the users can log into this admin site.",
                         verbose_name="staff status",
                     ),
                 ),
@@ -75,7 +76,7 @@ class Migration(migrations.Migration):
                     "is_active",
                     models.BooleanField(
                         default=True,
-                        help_text="Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
+                        help_text="Designates whether this users should be treated as active. Unselect this instead of deleting accounts.",
                         verbose_name="active",
                     ),
                 ),
@@ -114,9 +115,9 @@ class Migration(migrations.Migration):
                     "groups",
                     models.ManyToManyField(
                         blank=True,
-                        help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+                        help_text="The groups this users belongs to. A users will get all permissions granted to each of their groups.",
                         related_name="user_set",
-                        related_query_name="user",
+                        related_query_name="users",
                         to="auth.group",
                         verbose_name="groups",
                     ),
@@ -136,11 +137,11 @@ class Migration(migrations.Migration):
                     "user_permissions",
                     models.ManyToManyField(
                         blank=True,
-                        help_text="Specific permissions for this user.",
+                        help_text="Specific permissions for this users.",
                         related_name="user_set",
-                        related_query_name="user",
+                        related_query_name="users",
                         to="auth.permission",
-                        verbose_name="user permissions",
+                        verbose_name="users permissions",
                     ),
                 ),
             ],

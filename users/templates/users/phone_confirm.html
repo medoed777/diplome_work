@@ -1,0 +1,74 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Подтверждение кода</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+</head>
+<body>
+{% include 'includes/inc_menu.html' %}
+<div class="container">
+    {% block content %}
+    <div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header border-0">
+                    <h3 class="text-center mb-0">Введите код подтверждения</h3>
+                </div>
+                <div class="card-body p-4">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} mb-4">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="alert alert-info mb-4">
+                        На ваш номер телефона был отправлен код подтверждения
+                        {% if cached_code and debug %}
+                        <br>
+                        <small>(Тестовый режим: {{ cached_code }})</small>
+                        {% endif %}
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group mb-4">
+                            <label for="code" class="form-label">Код подтверждения:</label>
+                            <input type="text"
+                                   class="form-control form-control-lg text-center {% if form.code.errors %}is-invalid{% endif %}"
+                                   id="code"
+                                   name="code"
+                                   placeholder="Введите код"
+                                   maxlength="4"
+                                   required>
+                            {% if form.code.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.code.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Подтвердить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    {% endblock %}
+
+    <footer class="pt-4 my-md-5 pt-md-5 border-top">
+        {% include 'includes/inc_footer.html' %}
+    </footer>
+</div>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

@@ -3,13 +3,16 @@ import string
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import CharField
+
 from users.services import generate_invaite_code
-from phonenumber_field.modelfields import PhoneNumberField
 
 
 class User(AbstractUser):
     username = None
-    phone = PhoneNumberField(unique=True, verbose_name="Номер телефона", help_text="Введите номер телефона")
+    phone = CharField(
+        unique=True, verbose_name="Номер телефона", help_text="Введите номер телефона"
+    )
     invaite_code = models.CharField(
         max_length=6,
         unique=True,
@@ -27,6 +30,7 @@ class User(AbstractUser):
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name="Дата первой авторизации"
     )
+    code = CharField(max_length=4, verbose_name="Код авторизации", null=True, blank=True)
 
     USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = []

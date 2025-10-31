@@ -1,5 +1,6 @@
-from django import forms
 import re
+
+from django import forms
 
 
 class CodeForm(forms.Form):
@@ -8,6 +9,7 @@ class CodeForm(forms.Form):
 
 class PhoneLoginForm(forms.Form):
     """Форма для входа по номеру телефона"""
+
     phone = forms.CharField(
         label="Номер телефона",
         max_length=20,
@@ -22,8 +24,12 @@ class PhoneLoginForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        super(PhoneLoginForm, self).__init__(*args, **kwargs)
-
+        super().__init__(*args, **kwargs)
+        self.fields["phone"].help_text = (
+            '- Номер должен начинаться с символа "+"<br>'
+            '- Длина номера не должна превышать 20 символов (включая "+")<br>'
+            '- Исключите все специальные символы (скобки, тире, пробелы)'
+        )
 
     def clean_phone(self):
         phone = self.cleaned_data["phone"]

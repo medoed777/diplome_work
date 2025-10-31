@@ -3,7 +3,7 @@ import string
 
 import requests
 
-from config.settings import SMS_EMAIL, SMS_TOKEN, SMS_SIGN, DEBUG
+from config.settings import DEBUG, SMS_EMAIL, SMS_SIGN, SMS_TOKEN
 
 
 def generate_invaite_code():
@@ -19,19 +19,17 @@ def send_sms(phone, message):
             return True
 
         url = f"https://{SMS_EMAIL}:{SMS_TOKEN}@gate.smsaero.ru/v2/sms/send"
-        params = {
-            "number": formatted_phone,
-            "text": message,
-            "sign": SMS_SIGN
-        }
+        params = {"number": formatted_phone, "text": message, "sign": SMS_SIGN}
 
-        response = requests.get(url, params=params, headers={"Accept": "application/json"}, timeout=5)
+        response = requests.get(
+            url, params=params, headers={"Accept": "application/json"}, timeout=5
+        )
 
         if response.status_code == 200:
             result = response.json()
             return result.get("success", False)
-
-        print(f"Ошибка при отправке SMS: {response.status_code} - {response.text}")
+        else:
+            print(f"Ошибка при отправке SMS: {response.status_code} - {response.text}")
         return False
 
     except requests.exceptions.RequestException as e:

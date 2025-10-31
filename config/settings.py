@@ -9,12 +9,12 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+
 import os
 import sys
 from datetime import timedelta
 from pathlib import Path
 
-from django.conf.global_settings import AUTH_USER_MODEL
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
@@ -24,6 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 AUTH_USER_MODEL = "users.User"
 LOGIN_REDIRECT_URL = "/"
+LOGIN_URL = "main:phone_login"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "users",
     "phonenumber_field",
+    "main",
 ]
 
 REST_FRAMEWORK = {
@@ -87,10 +89,11 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
+                "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
@@ -187,3 +190,8 @@ SIMPLE_JWT = {
 SMS_EMAIL = os.getenv("SMS_EMAIL")
 SMS_TOKEN = os.getenv("SMS_TOKEN")
 SMS_SIGN = os.getenv("SMS_SIGN")
+
+AUTHENTICATION_BACKENDS = [
+    # "django.contrib.auth.backends.ModelBackend",
+    "users.backends.PhoneBackend",
+]

