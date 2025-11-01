@@ -41,5 +41,5 @@ class RegisterSerializer(serializers.Serializer):
 
 
 class VerifyCodeSerializer(serializers.Serializer):
-    phone = serializers.CharField(required=True)
+    phone = serializers.CharField(max_length=20, required=True)
     code = serializers.CharField(required=True)

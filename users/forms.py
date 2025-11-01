@@ -17,17 +17,21 @@ class PhoneLoginForm(forms.Form):
             attrs={
                 "type": "tel",
                 "class": "form-control form-control-lg",
-                "placeholder": "+7 (999) 999-99-99",
+                "placeholder": "+7 (999)-999-99-99",
                 "id": "phone",
             }
         ),
+        error_messages={
+            'required': "Это поле обязательно для заполнения.",
+            'max_length': "Длина номера не должна превышать 20 символов.",
+        }
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["phone"].help_text = (
             '- Номер должен начинаться с символа "+"<br>'
-            '- Длина номера не должна превышать 20 символов (включая "+")<br>'
+            '- Длина номера не должна превышать 20 символов (включая "+")'
             '- Исключите все специальные символы (скобки, тире, пробелы)'
         )
 

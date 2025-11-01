@@ -164,12 +164,19 @@ class PhoneConfirmView(FormView):
         user = User.objects.filter(phone=phone).first()
         cached_code = cache.get(f"user_{phone}_code")
 
-        if user and code == cached_code:
-            user = authenticate(request=request, username=phone, password=code)
-            if user is not None:
-                login(request, user, backend="users.backends.PhoneBackend")
-                return redirect("main:profile")
+        form = self.get_form()
+
+        if form.is_valid():
+            if user and code == cached_code:
+                user = authenticate(request=request, username=phone, password=code)
+                if user is not None:
+                    login(request, user, backend="users.backends.PhoneBackend")
+                    return redirect("main:profile")
+                else:
+                    form.add_error("code", "Неверный код")
+                    return self.form_invalid(form)
             else:
-                form = self.get_form()
-                form.add_error("code", "Неверный код")
+                form.add_error("code", "Неверный код или пользователь не найден.")
                 return self.form_invalid(form)
+        else:
+            return self.form_invalid(form)

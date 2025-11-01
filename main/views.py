@@ -1,7 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.urls import reverse_lazy
+from django.views.generic import FormView
 from users.models import User
 from main.forms import InvaiteCodeForm
 from django.contrib import messages
@@ -11,9 +12,10 @@ def main_page(request: HttpRequest) -> HttpResponse:
     return render(request, "main/base.html")
 
 
-class ProfileView(LoginRequiredMixin, TemplateView):
+class ProfileView(LoginRequiredMixin, FormView):
     template_name = "main/profile.html"
     form_class = InvaiteCodeForm
+    success_url = reverse_lazy("main:profile")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
