@@ -1,9 +1,10 @@
 import random
 import string
-
+import time
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import CharField
+from django.core.cache import cache
 
 from users.services import generate_invaite_code
 
@@ -30,14 +31,17 @@ class User(AbstractUser):
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name="Дата первой авторизации"
     )
-    code = CharField(max_length=4, verbose_name="Код авторизации", null=True, blank=True)
 
     USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = []
 
     def generate_code(self):
+        time.sleep(2)
         chars = string.digits
         code = "".join([random.choice(chars) for _ in range(4)])
+        cache.set(
+            f"user_{self.phone}_code", code, timeout=300
+        )
         return code
 
     def __str__(self):

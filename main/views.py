@@ -1,14 +1,19 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseForbidden
-from django.views.generic import TemplateView, ListView, FormView
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import render
+from django.views.generic import TemplateView
 from users.models import User
 from main.forms import InvaiteCodeForm
 from django.contrib import messages
-from django.urls import reverse_lazy
+
+
+def main_page(request: HttpRequest) -> HttpResponse:
+    return render(request, "main/base.html")
 
 
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = "main/profile.html"
+    form_class = InvaiteCodeForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -19,26 +24,16 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         context["invaited_users"] = invaited_users
         context["user"] = user
         context["invaited_users_count"] = invaited_users_count
+        context["form"] = self.form_class()
         return context
 
-
-class UserListView(LoginRequiredMixin, ListView):
-    model = User
-    template_name = "main/user_list.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        user = self.request.user
-        if user.is_superuser:
-            return super().dispatch(request, *args, **kwargs)
-        return HttpResponseForbidden(
-            "Вы не можете просматривать/изменять или удалять этот объект."
-        )
-
-
-class EnterInvaiteCodeView(LoginRequiredMixin, FormView):
-    template_name = "main/invaite_code.html"
-    form_class = InvaiteCodeForm
-    success_url = reverse_lazy("main:profile")
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            messages.error(request, "Ошибка при обработке формы")
+            return self.get(request, *args, **kwargs)
 
     def form_valid(self, form):
         invaite_code = form.cleaned_data["invaite_code"]
@@ -65,3 +60,6 @@ class EnterInvaiteCodeView(LoginRequiredMixin, FormView):
 
         messages.success(self.request, "Инвайт-код успешно применен")
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return self.get(self.request)

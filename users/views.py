@@ -26,12 +26,6 @@ class RegisterView(APIView):
             phone = serializer.validated_data["phone"]
             invaited_by_code = serializer.validated_data.get("invaited_by")
 
-            # if User.objects.filter(phone=phone).exists():
-            #     return Response(
-            #         {"message": "Пользователь с таким номером телефона уже зарегистрирован."},
-            #         status=status.HTTP_400_BAD_REQUEST,
-            #     )
-
             user, create = User.objects.get_or_create(phone=phone)
 
             if invaited_by_code:
@@ -154,6 +148,7 @@ class PhoneConfirmView(FormView):
         if phone:
             cached_code = cache.get(f"user_{phone}_code")
             context["cached_code"] = cached_code
+            context["debug"] = DEBUG
         return context
 
     def post(self, request, *args, **kwargs):
@@ -173,7 +168,7 @@ class PhoneConfirmView(FormView):
             user = authenticate(request=request, username=phone, password=code)
             if user is not None:
                 login(request, user, backend="users.backends.PhoneBackend")
-                return redirect("main:index")
+                return redirect("main:profile")
             else:
                 form = self.get_form()
                 form.add_error("code", "Неверный код")

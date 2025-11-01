@@ -150,75 +150,75 @@ class PhoneLoginViewTestCase(APITestCase):
         self.assertContains(response, "Ошибка отправки SMS")
 
 
-# class PhoneConfirmViewTestCase(APITestCase):
-#     def setUp(self):
-#         self.client = Client()
-#         self.user = User.objects.create(phone="+79991234567")
-#         self.code = self.user.generate_code()
-#         session = self.client.session
-#         session["phone"] = self.user.phone
-#         session.save()
-#         self.url = reverse("main:phone_confirm")
-#
-#     def test_phone_confirm_view_success(self):
-#         response = self.client.post(self.url, {"code": self.code})
-#         self.assertEqual(response.status_code, 302)
-#
-#     def test_phone_confirm_view_invalide_code(self):
-#         response = self.client.post(self.url, {"code": "999999"})
-#         self.assertEqual(response.status_code, 200)
-#         self.assertContains(response, "Неверный код")
-#
-# class PhoneBackendTest(TestCase):
-#
-#     def setUp(self):
-#         """Создаем пользователя для тестов"""
-#         self.user = User.objects.create(phone="+79991234567")
-#         # Генерация кода для пользователя
-#         self.code = self.user.generate_code()
-#
-#     @patch("users.models.User.objects.get")
-#     def test_authenticate_success(self, mock_get_user):
-#         """Тест на успешную аутентификацию пользователя по телефону и коду"""
-#         mock_get_user.return_value = self.user
-#
-#         backend = PhoneBackend()
-#         authenticated_user = backend.authenticate(
-#             None, phone="+79991234567", code=self.code
-#         )
-#
-#         self.assertEqual(authenticated_user, self.user)
-#         mock_get_user.assert_called_once_with(phone="+79991234567")
-#
-#     @patch("users.models.User.objects.get")
-#     def test_authenticate_user_not_found(self, mock_get_user):
-#         """Тест, если пользователь с таким телефоном не найден"""
-#         mock_get_user.side_effect = User.DoesNotExist
-#
-#         backend = PhoneBackend()
-#         authenticated_user = backend.authenticate(
-#             None, phone="+79991234567", code=self.code
-#         )
-#
-#         self.assertIsNone(authenticated_user)
-#
-#     @patch("users.models.User.objects.get")
-#     def test_get_user_success(self, mock_get_user):
-#         """Тест на получение пользователя по id"""
-#         mock_get_user.return_value = self.user
-#
-#         backend = PhoneBackend()
-#         user = backend.get_user(self.user.id)
-#
-#         self.assertEqual(user, self.user)
-#         mock_get_user.assert_called_once_with(pk=self.user.id)
-#
-#     @patch("users.models.User.objects.get")
-#     def test_get_user_not_found(self, mock_get_user):
-#         """Тест, если пользователь не найден по id"""
-#         mock_get_user.side_effect = User.DoesNotExist
-#
-#         backend = PhoneBackend()
-#         user = backend.get_user(self.user.id)
-#
-#         self.assertIsNone(user)
+class PhoneConfirmViewTestCase(APITestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create(phone="+79991234567")
+        self.code = self.user.generate_code()
+        session = self.client.session
+        session["phone"] = self.user.phone
+        session.save()
+        self.url = reverse("main:phone_confirm")
+
+    def test_phone_confirm_view_success(self):
+        response = self.client.post(self.url, {"code": self.code})
+        self.assertEqual(response.status_code, 302)
+
+    def test_phone_confirm_view_invalide_code(self):
+        response = self.client.post(self.url, {"code": "999999"})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Неверный код")
+
+class PhoneBackendTest(TestCase):
+
+    def setUp(self):
+        """Создаем пользователя для тестов"""
+        self.user = User.objects.create(phone="+79991234567")
+        # Генерация кода для пользователя
+        self.code = self.user.generate_code()
+
+    @patch("users.models.User.objects.get")
+    def test_authenticate_success(self, mock_get_user):
+        """Тест на успешную аутентификацию пользователя по телефону и коду"""
+        mock_get_user.return_value = self.user
+
+        backend = PhoneBackend()
+        authenticated_user = backend.authenticate(
+            None, phone="+79991234567", code=self.code
+        )
+
+        self.assertEqual(authenticated_user, self.user)
+        mock_get_user.assert_called_once_with(phone="+79991234567")
+
+    @patch("users.models.User.objects.get")
+    def test_authenticate_user_not_found(self, mock_get_user):
+        """Тест, если пользователь с таким телефоном не найден"""
+        mock_get_user.side_effect = User.DoesNotExist
+
+        backend = PhoneBackend()
+        authenticated_user = backend.authenticate(
+            None, phone="+79991234567", code=self.code
+        )
+
+        self.assertIsNone(authenticated_user)
+
+    @patch("users.models.User.objects.get")
+    def test_get_user_success(self, mock_get_user):
+        """Тест на получение пользователя по id"""
+        mock_get_user.return_value = self.user
+
+        backend = PhoneBackend()
+        user = backend.get_user(self.user.id)
+
+        self.assertEqual(user, self.user)
+        mock_get_user.assert_called_once_with(pk=self.user.id)
+
+    @patch("users.models.User.objects.get")
+    def test_get_user_not_found(self, mock_get_user):
+        """Тест, если пользователь не найден по id"""
+        mock_get_user.side_effect = User.DoesNotExist
+
+        backend = PhoneBackend()
+        user = backend.get_user(self.user.id)
+
+        self.assertIsNone(user)

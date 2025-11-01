@@ -15,7 +15,7 @@ def send_sms(phone, message):
         formatted_phone = phone.lstrip("+")
 
         if DEBUG:
-            print(f"Сообщение {message} будет отправлено на номер {formatted_phone}.")
+            print(f"Код {message} будет отправлен на номер {formatted_phone}.")
             return True
 
         url = f"https://{SMS_EMAIL}:{SMS_TOKEN}@gate.smsaero.ru/v2/sms/send"

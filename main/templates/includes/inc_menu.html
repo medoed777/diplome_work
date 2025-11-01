@@ -1,12 +1,15 @@
 <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
     <h5 class="my-0 mr-md-auto font-weight-normal">Сервис авторизации по номеру телефона</h5>
-    <nav class="ms-5">
+    <nav class="ms-5 d-flex align-items-center gap-2">
+        <a class="btn btn-outline-primary" href="{% url 'main:base' %}">Главная</a>
         {% if user.is_authenticated %}
-        <a class="p-2 btn btn-outline-primary" href="{% url 'main:index' %}">Главная</a>
-        <a class="p-2 btn btn-outline-primary" href="{% url 'main:logout' %}">Выход</a>
-
+            <a class="btn btn-outline-primary" href="{% url 'main:profile' %}">Профиль</a>
+            <form method="post" action="{% url 'main:logout' %}" class="m-0 p-0" onsubmit="return confirm('Вы уверены, что хотите выйти?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger">Выход</button>
+            </form>
         {% else %}
-        <a class="p-2 btn btn-outline-primary" href="{% url 'main:phone_login' %}">Войти</a>
+            <a class="btn btn-outline-primary" href="{% url 'main:phone_login' %}">Войти</a>
         {% endif %}
     </nav>
 </div>
