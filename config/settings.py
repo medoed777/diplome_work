@@ -121,7 +121,7 @@ else:
             "HOST": os.getenv("DATABASE_HOST"),
             "USER": os.getenv("DATABASE_USER"),
             "PASSWORD": os.getenv("DATABASE_PASSWORD"),
-            "NAME": os.getenv("DATABASE_NAME", "127.0.0.1"),
+            "NAME": os.getenv("DATABASE_NAME"),
             "PORT": os.getenv("DATABASE_PORT", default="5432"),
         }
     }

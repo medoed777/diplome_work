@@ -1,4 +1,4 @@
-# Referral system on Python
+# Phone number authorization service with a referral system
 
 ### Описание проекта
 
@@ -55,7 +55,85 @@
 
 Подробная документация API доступна по адресу ```redoc/```, ```swagger/``` после запуска сервера.
 
+#### API Postman
 
+Регистрация и авторизация<br>
+POST /users/register/<br>
+
+Регистрация нового пользователя или запрос кода подтверждения для существующего.
+
+Request:
+
+>{<br>
+>    "phone": "+79001234567"<br>
+>}
+
+Response:
+>{<br>
+>    "message": "Код отправлен",<br>
+>    "debug_code": "9378"<br>
+>}
+
+POST /users/verify-code/<br>
+Подтверждение кода авторизации.
+
+Request:
+>{<br>
+>    "phone": "+79001234567",<br>
+ >   "code": "9378"<br>
+>}<br>
+> 
+Response:
+
+>{<br>
+    "refresh": "refresh_token",<br>
+    "access": "access_token"<br>
+>}<br>
+> 
+Профиль пользователя<br>
+GET /api/profile/<br>
+Получение информации о текущем пользователе.
+
+Request:
+
+>{<br>
+    "phone": "+79001234567",<br>
+>}
+
+Response:
+
+>{<br>
+    "id": 1,<br>
+    "phone": "+79001234567",<br>
+    "invite_code": "ABC123",<br>
+    "invited_by_user": {<br>
+        "id": 2,<br>
+        "phone": "+79007654321",<br>
+        "invite_code": "XYZ789"<br>
+    },<br>
+    "created_at": "2024-03-12T12:00:00Z",<br>
+    "invited_users": [<br>
+        {<br>
+            "id": 3,<br>
+            "phone": "+79009876543"<br>
+        }<br>
+    ]<br>
+>}<br>
+> 
+GET /api/profile/<br>
+Получение access_token с помощью refresh_token.
+
+Request:
+
+>{<br>
+    "refresh": "refresh_token"<br>
+>}
+
+Response:
+
+>{<br>
+    "access": "access_token"<br>
+>}
 
 #### Postman Коллекция
 
