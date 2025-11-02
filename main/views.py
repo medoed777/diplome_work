@@ -1,11 +1,12 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import FormView
-from users.models import User
+
 from main.forms import InvaiteCodeForm
-from django.contrib import messages
+from users.models import User
 
 
 def main_page(request: HttpRequest) -> HttpResponse:
@@ -47,6 +48,7 @@ class ProfileView(LoginRequiredMixin, FormView):
 
         try:
             invaited_by_user = User.objects.get(invaite_code=invaite_code)
+
         except User.DoesNotExist:
             messages.error(self.request, "Неверный инвайт-код")
             return self.form_invalid(form)
@@ -60,7 +62,6 @@ class ProfileView(LoginRequiredMixin, FormView):
         user.invaited_by = invaited_by_user
         user.save()
 
-        messages.success(self.request, "Инвайт-код успешно применен")
         return super().form_valid(form)
 
     def form_invalid(self, form):

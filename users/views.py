@@ -29,7 +29,9 @@ class RegisterView(APIView):
             user, create = User.objects.get_or_create(phone=phone)
 
             if invaited_by_code:
-                invaited_by_user = User.objects.filter(invaite_code=invaited_by_code).first()
+                invaited_by_user = User.objects.filter(
+                    invaite_code=invaited_by_code
+                ).first()
                 if invaited_by_user:
                     if user.invaited_by:
                         return Response(
@@ -69,35 +71,23 @@ class VerifyCodeView(APIView):
         if serializer.is_valid():
             phone = serializer.validated_data["phone"]
             code = serializer.validated_data["code"]
-            try:
-                user = User.objects.get(phone=phone)
-                if user is not None:
-                    if user.code == code:
-                        refresh = RefreshToken.for_user(user)
-                        user.code = None
-                        user.save()
-                        return Response(
-                            {
-                                "refresh": str(refresh),
-                                "access": str(refresh.access_token),
-                                "message": "Авторизация успешна",
-                            },
-                            status=status.HTTP_200_OK,
-                        )
-                    else:
-                        return Response(
-                            {"message": "Неверный код или срок действия истек"},
-                            status=status.HTTP_403_FORBIDDEN,
-                        )
-                else:
-                    return Response(
-                        {"message": "Код уже использован или срок действия истек"},
-                        status=status.HTTP_403_FORBIDDEN,
-                    )
-            except User.DoesNotExist:
+            user = User.objects.get(phone=phone)
+
+            if user and user.generate_code() == code:
+                refresh = RefreshToken.for_user(user)
+                user.save()
                 return Response(
-                    {"message": "Пользователь с таким номером телефона не найден"},
-                    status=status.HTTP_404_NOT_FOUND,
+                    {
+                        "refresh": str(refresh),
+                        "access": str(refresh.access_token),
+                        "message": "Авторизация успешна",
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            else:
+                return Response(
+                    {"message": "Неверный код или срок действия истек"},
+                    status=status.HTTP_403_FORBIDDEN,
                 )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -154,12 +144,12 @@ class PhoneConfirmView(FormView):
     def post(self, request, *args, **kwargs):
         phone = request.session.get("phone")
         code = request.POST.get("code")
-
-        if not phone:
+        cached_code = cache.get(f"user_{phone}_code")
+        if not cached_code:
             messages.error(
                 request, "Сессия истекла. Пожалуйста, введите номер телефона заново."
             )
-            return redirect("users:phone_login")
+            return redirect("main:phone_login")
 
         user = User.objects.filter(phone=phone).first()
         cached_code = cache.get(f"user_{phone}_code")

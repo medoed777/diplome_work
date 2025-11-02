@@ -1,9 +1,9 @@
+from django.contrib.auth import views as auth_views
 from django.urls import path
+
 from main.apps import MainConfig
 from main.views import ProfileView, main_page
-from users.views import PhoneLoginView, PhoneConfirmView
-from django.contrib.auth import views as auth_views
-
+from users.views import PhoneConfirmView, PhoneLoginView
 
 app_name = MainConfig.name
 

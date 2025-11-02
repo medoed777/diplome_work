@@ -19,13 +19,6 @@
                         <h3 class="text-center mb-0">Введите код подтверждения</h3>
                     </div>
                     <div class="card-body p-4">
-                        {% if messages %}
-                            {% for message in messages %}
-                                <div class="alert alert-{{ message.tags }} mb-4">
-                                    {{ message }}
-                                </div>
-                            {% endfor %}
-                        {% endif %}
 
                         <div class="alert alert-info mb-4">
                             На ваш номер телефона был отправлен код подтверждения
