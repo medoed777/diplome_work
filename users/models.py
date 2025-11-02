@@ -37,11 +37,15 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     def generate_code(self):
-        time.sleep(2)
+        # time.sleep(2)
         chars = string.digits
         code = "".join([random.choice(chars) for _ in range(4)])
         cache.set(f"user_{self.phone}_code", code, timeout=300)
         return code
+
+    def check_code(self, code):
+        cached_code = cache.get(f"user_{self.phone}_code")
+        return cached_code == code
 
     def __str__(self):
         return str(self.phone)

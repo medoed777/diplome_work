@@ -73,7 +73,7 @@ class VerifyCodeView(APIView):
             code = serializer.validated_data["code"]
             user = User.objects.get(phone=phone)
 
-            if user and user.generate_code() == code:
+            if user and user.check_code(code):
                 refresh = RefreshToken.for_user(user)
                 user.save()
                 return Response(

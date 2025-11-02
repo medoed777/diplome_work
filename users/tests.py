@@ -59,16 +59,16 @@ class RegisterViewTestCase(APITestCase):
         self.assertIn("invaited_by", response.data)
         self.assertEqual(User.objects.count(), 2)
 
-    # class VerifyCodeViewTestCase(APITestCase):
-    #     def test_verify_correct_code(self):
-    #         user = User.objects.create(phone="+79991234560")
-    #         code = user.generate_code()
-    #         url = reverse("users:verify_code")
-    #         data = {"phone": user.phone, "code": code}
-    #         response = self.client.post(url, data)
-    #         self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #         self.assertIn("access", response.data)
-    #         self.assertIn("refresh", response.data)
+    class VerifyCodeViewTestCase(APITestCase):
+        def test_verify_correct_code(self):
+            user = User.objects.create(phone="+79991234560")
+            code = user.generate_code()
+            url = reverse("users:verify_code")
+            data = {"phone": user.phone, "code": code}
+            response = self.client.post(url, data)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertIn("access", response.data)
+            self.assertIn("refresh", response.data)
 
     def test_verify_wrong_code(self):
         user = User.objects.create(phone="+79991234567")
