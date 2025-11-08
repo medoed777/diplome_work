@@ -1,5 +1,6 @@
 import random
 import string
+from urllib.parse import quote
 
 import requests
 
@@ -13,16 +14,29 @@ def generate_invaite_code():
 def send_sms(phone, message):
     try:
         formatted_phone = phone.lstrip("+")
-
+        encoded_text = quote(message)
+        encoded_sign = quote(SMS_SIGN)
         if DEBUG:
             print(f"Код {message} будет отправлен на номер {formatted_phone}.")
             return True
+        if DEBUG:
+            api_sms = "testsend?"
+        else:
+            api_sms = "send?"
 
-        url = f"https://{SMS_EMAIL}:{SMS_TOKEN}@gate.smsaero.ru/v2/sms/send"
-        params = {"number": formatted_phone, "text": message, "sign": SMS_SIGN}
+        url = (
+            f"https://{SMS_EMAIL}:{SMS_TOKEN}"
+            f"@gate.smsaero.ru/v2/sms/{api_sms}"
+            f"number={formatted_phone}&"
+            f"text={encoded_text}&"
+            f"sign={encoded_sign}&"
+            f"channel=DIRECT"
+        )
 
         response = requests.get(
-            url, params=params, headers={"Accept": "application/json"}, timeout=5
+            requests.utils.requote_uri(url),
+            headers={"Accept": "application/json"},
+            timeout=5,
         )
 
         if response.status_code == 200:

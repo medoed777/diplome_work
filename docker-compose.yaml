@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   web:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: referral_system
-    command: sh -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000"
+    command: sh -c "python manage.py migrate && python manage.py collectstatic --noinput && python manage.py add_users && python manage.py csu && gunicorn config.wsgi:application --bind 0.0.0.0:8000"
     ports:
       - "8000:8000"
     env_file:
@@ -14,6 +12,7 @@ services:
     environment:
       DATABASE_HOST: db
       REDIS_HOST: redis
+    network_mode: host
     volumes:
       - .:/app
       - static_volume:/app/static/
@@ -21,19 +20,10 @@ services:
       - db
       - redis
 
-  nginx:
-    build:
-      context: ./nginx
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - static_volume:/app/static/
-    depends_on:
-      - web
-
   db:
     image: postgres:16.3
+    ports:
+      - 5432:5432
     container_name: postgres_diplome
     env_file:
       - ./.env
